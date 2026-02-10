@@ -1,0 +1,33 @@
+{
+  "originHash" : "63c7cb0a6a838aedb32a1b34ef047c53b986555e62a25b868a249d6d626e0554",
+  "pins" : [
+    {
+      "identity" : "plcrashreporter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/plcrashreporter",
+      "state" : {
+        "revision" : "0254f941c646b1ed17b243654723d0f071e990d0",
+        "version" : "1.12.2"
+      }
+    },
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift.git",
+      "state" : {
+        "revision" : "392dd6058624d9f6c5b4c769d165ddd8c7293394",
+        "version" : "0.15.4"
+      }
+    },
+    {
+      "identity" : "swift-toolchain-sqlite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-toolchain-sqlite",
+      "state" : {
+        "revision" : "b626d3002773b1a1304166643e7f118f724b2132",
+        "version" : "1.0.4"
+      }
+    }
+  ],
+  "version" : 3
+}

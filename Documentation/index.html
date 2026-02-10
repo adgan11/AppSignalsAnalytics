@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AppSignals Documentation</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f7f9;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --accent: #2563eb;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 18px 0;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    h1, h2, h3, h4 {
+      line-height: 1.2;
+      margin: 24px 0 12px;
+    }
+    h1 { font-size: 32px; }
+    h2 { font-size: 24px; margin-top: 32px; }
+    h3 { font-size: 18px; margin-top: 24px; }
+    h4 { font-size: 16px; margin-top: 18px; }
+    p { margin: 10px 0; }
+    ul { padding-left: 20px; }
+    li { margin: 6px 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      border: 1px solid #1e293b;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+      font-size: 12.5px;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .muted { color: var(--muted); }
+    .toc a { display: block; padding: 4px 0; }
+    .label { display: inline-block; font-weight: 600; font-size: 12px; color: #111827; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+    .warning {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      padding: 12px 14px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AppSignals Documentation</h1>
+    <p class="muted">This documentation covers the full AppSignals stack: the Laravel backend, the iOS SDK, and the demo app. It is written to be a complete, end-to-end install and deployment guide.</p>
+
+    <div class="card">
+      <h2>Table of Contents</h2>
+      <div class="toc">
+        <a href="#overview">1. Overview</a>
+        <a href="#structure">2. Folder Structure</a>
+        <a href="#requirements">3. Requirements</a>
+        <a href="#quick-start">4. Quick Start (Local)</a>
+        <a href="#env-config">5. Environment Configuration</a>
+        <a href="#database">6. Database Setup</a>
+        <a href="#migrations-seeding">7. Migrations and Seeding</a>
+        <a href="#running-local">8. Running Locally</a>
+        <a href="#queue-scheduler">9. Queue Worker and Scheduler</a>
+        <a href="#reverb">10. Reverb Realtime Server</a>
+        <a href="#geoip">11. GeoIP Setup (Optional)</a>
+        <a href="#build-assets">12. Frontend Assets (Vite)</a>
+        <a href="#tests">13. Testing</a>
+        <a href="#api-keys">14. API Keys and Ingestion</a>
+        <a href="#dashboard">15. Dashboard Usage</a>
+        <a href="#sdk">16. AppSignals iOS SDK</a>
+        <a href="#demo-app">17. Demo App (AppSignals Demo)</a>
+        <a href="#customization">18. Customization Guide</a>
+        <a href="#deployment">19. Deployment (Production)</a>
+        <a href="#hosting">20. Hosting Tutorials (Free and Paid)</a>
+        <a href="#security">21. Security Checklist</a>
+        <a href="#troubleshooting">22. Troubleshooting</a>
+        <a href="#third-party">23. Third-Party Packages</a>
+        <a href="#faq">24. FAQ</a>
+        <a href="#support">25. Support and Updates</a>
+      </div>
+    </div>
+
+    <div id="overview" class="card">
+      <h2>1. Overview</h2>
+      <p>AppSignals is a self-hosted mobile analytics platform with three main parts:</p>
+      <ul>
+        <li><strong>Backend (Laravel)</strong>: Ingests events, crashes, and session replay frames, stores analytics data, and provides the dashboard UI.</li>
+        <li><strong>SDK (Swift Package)</strong>: iOS client SDK to track events, crashes, and optional session replay wireframes.</li>
+        <li><strong>Demo App (AppSignals Demo)</strong>: A sample iOS app that shows how to integrate the SDK and send sample data.</li>
+      </ul>
+      <p class="muted">All source code is included in this repository.</p>
+    </div>
+
+    <div id="structure" class="card">
+      <h2>2. Folder Structure</h2>
+      <ul>
+        <li><code>backend/</code> - Laravel backend, dashboard UI, API, and database migrations.</li>
+        <li><code>AppSignalsSDK/</code> - Swift Package for iOS SDK.</li>
+        <li><code>AppSignalsDemo/</code> - Example iOS app integrating the SDK.</li>
+        <li><code>Documentation/</code> - This documentation.</li>
+      </ul>
+      <p>Key backend directories:</p>
+      <ul>
+        <li><code>backend/app/Http/Controllers</code> - Web and API controllers.</li>
+        <li><code>backend/app/Models</code> - Eloquent models for events, crashes, projects, etc.</li>
+        <li><code>backend/routes</code> - Web and API routes.</li>
+        <li><code>backend/resources/views</code> - Blade views for the dashboard.</li>
+        <li><code>backend/resources/js</code> - Frontend JS (Alpine, Chart.js).</li>
+        <li><code>backend/resources/css</code> - Tailwind CSS.</li>
+        <li><code>backend/database/migrations</code> - Database schema.</li>
+        <li><code>backend/database/seeders</code> - Demo data seeders.</li>
+      </ul>
+    </div>
+
+    <div id="requirements" class="card">
+      <h2>3. Requirements</h2>
+      <p class="muted">One-page summary: <code>Documentation/server-requirements.md</code></p>
+      <div class="grid">
+        <div>
+          <h3>Backend (Laravel)</h3>
+          <ul>
+            <li>PHP 8.2 or higher</li>
+            <li>Composer 2.x</li>
+            <li>MySQL 8.0+ or MariaDB 10.6+</li>
+            <li>Node.js 18+ and npm</li>
+            <li>Required PHP extensions: bcmath, ctype, fileinfo, json, mbstring, openssl, pdo, tokenizer, xml</li>
+          </ul>
+        </div>
+        <div>
+          <h3>iOS SDK</h3>
+          <ul>
+            <li>Xcode 16 (Swift 6 toolchain)</li>
+            <li>iOS 16+ deployment target</li>
+            <li>macOS 13+ if building the SDK on macOS</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Demo App</h3>
+          <ul>
+            <li>Xcode 16+</li>
+            <li>iOS Simulator or a physical device</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="quick-start" class="card">
+      <h2>4. Quick Start (Local)</h2>
+      <p>This section gets the backend running quickly on your local machine.</p>
+      <h3>Option A - installer command (recommended)</h3>
+      <pre><code>cd backend
+composer install
+
+# If needed, edit .env with your DB credentials before running the installer
+# Create .env, generate APP_KEY, run migrations, and seed demo data
+php artisan appsignals:install --seed
+
+# Run Laravel dev server
+php artisan serve
+
+# Run Vite in a separate terminal
+npm install
+npm run dev</code></pre>
+
+      <h3>Option B - manual setup</h3>
+      <ol>
+        <li>Open a terminal and enter the backend folder.</li>
+        <li>Install Composer dependencies.</li>
+        <li>Copy the environment file and set your DB credentials.</li>
+        <li>Generate an app key.</li>
+        <li>Run migrations and seed demo data.</li>
+        <li>Start the Laravel server and Vite dev server.</li>
+      </ol>
+      <pre><code>cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+
+# Edit .env and set DB_DATABASE, DB_USERNAME, DB_PASSWORD
+php artisan migrate
+php artisan db:seed
+
+# Run Laravel dev server
+php artisan serve
+
+# Run Vite in a separate terminal
+npm install
+npm run dev</code></pre>
+      <p class="muted">The dashboard will be available at <code>http://127.0.0.1:8000</code> by default.</p>
+    </div>
+
+    <div id="env-config" class="card">
+      <h2>5. Environment Configuration</h2>
+      <p>All backend configuration is in <code>backend/.env</code>. Start from <code>backend/.env.example</code>.</p>
+      <h3>Required environment values</h3>
+      <ul>
+        <li><code>APP_NAME</code> - App name shown in the UI.</li>
+        <li><code>APP_ENV</code> - Use <code>local</code> for dev, <code>production</code> for live.</li>
+        <li><code>APP_DEBUG</code> - Use <code>false</code> in production.</li>
+        <li><code>APP_URL</code> - Base URL of your backend (used in links and API endpoints).</li>
+        <li><code>DB_*</code> - Database connection details.</li>
+        <li><code>QUEUE_CONNECTION</code> - Default is <code>database</code>.</li>
+        <li><code>BROADCAST_CONNECTION</code> - Default is <code>reverb</code>.</li>
+      </ul>
+
+      <h3>Optional environment values</h3>
+      <ul>
+        <li><code>GEOIP_DATABASE_PATH</code> - Used if you enable GeoIP lookup.</li>
+        <li><code>REVERB_*</code> - Websocket server settings.</li>
+        <li><code>MAIL_*</code> - Required if you use email verification and password reset.</li>
+        <li><code>APPSIGNALS_INGEST_RATE_LIMIT_PER_MINUTE</code> - Per-API-key ingestion limit.</li>
+        <li><code>APPSIGNALS_CORS_ORIGINS</code> - Comma-separated origins for browser-based ingestion.</li>
+        <li><code>APPSIGNALS_SYMBOLICATION_ENABLED</code> - Enable server-side symbolication.</li>
+        <li><code>APPSIGNALS_SYMBOLICATION_COMMAND</code> - Command that reads stack trace from STDIN and outputs symbolicated text.</li>
+        <li><code>APPSIGNALS_SYMBOLICATION_BATCH</code> - Crash batch size per run.</li>
+        <li><code>APPSIGNALS_DEMO_SEED</code> - Enable demo users and demo metrics seeders.</li>
+      </ul>
+
+      <h3>Example .env (production)</h3>
+      <pre><code>APP_NAME=AppSignals
+APP_ENV=production
+APP_KEY=base64:GENERATE_THIS
+APP_DEBUG=false
+APP_URL=https://analytics.yourdomain.com
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=appsignals
+DB_USERNAME=appsignals_user
+DB_PASSWORD=strong_password
+
+QUEUE_CONNECTION=database
+BROADCAST_CONNECTION=reverb
+CACHE_STORE=database
+
+REVERB_APP_ID=appsignals
+REVERB_APP_KEY=change-this-key
+REVERB_APP_SECRET=change-this-secret
+REVERB_HOST=analytics.yourdomain.com
+REVERB_PORT=443
+REVERB_SCHEME=https</code></pre>
+    </div>
+
+    <div id="database" class="card">
+      <h2>6. Database Setup</h2>
+      <p>AppSignals uses MySQL or MariaDB. Create a dedicated database and user:</p>
+      <pre><code>CREATE DATABASE appsignals CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'appsignals_user'@'%' IDENTIFIED BY 'strong_password';
+GRANT ALL PRIVILEGES ON appsignals.* TO 'appsignals_user'@'%';
+FLUSH PRIVILEGES;</code></pre>
+      <p>Then update <code>.env</code> with the DB credentials.</p>
+    </div>
+
+    <div id="migrations-seeding" class="card">
+      <h2>7. Migrations and Seeding</h2>
+      <p>Run all migrations:</p>
+      <pre><code>php artisan migrate</code></pre>
+      <p>Optional demo seeders:</p>
+      <pre><code>php artisan db:seed</code></pre>
+      <p class="muted">The demo seed creates a demo user and sample analytics events for charts.</p>
+      <p class="muted">Set <code>APPSIGNALS_DEMO_SEED=false</code> in production to disable demo data.</p>
+      <p>Reset demo data at any time:</p>
+      <pre><code>php artisan demo:reset</code></pre>
+
+      <h3>Demo credentials</h3>
+      <ul>
+        <li>Email: <code>demo@appsignals.dev</code></li>
+        <li>Password: <code>password</code></li>
+        <li>Demo API Key: generated on seed and visible in Settings - Setup</li>
+      </ul>
+    </div>
+
+    <div id="running-local" class="card">
+      <h2>8. Running Locally</h2>
+      <p>There are two common options to run locally.</p>
+
+      <h3>Option A - manual terminals</h3>
+      <ol>
+        <li>Start Laravel server: <code>php artisan serve</code></li>
+        <li>Start Vite: <code>npm run dev</code></li>
+        <li>Start queue worker: <code>php artisan queue:work</code></li>
+        <li>Start Reverb: <code>php artisan reverb:start</code></li>
+      </ol>
+
+      <h3>Option B - use the helper script</h3>
+      <p>There is a script that starts all services in parallel:</p>
+      <pre><code>cd backend
+./start_dev.sh</code></pre>
+      <p class="muted">The script uses ports 8000 (Laravel) and 5173 (Vite) by default. You can override them:</p>
+      <pre><code>PORT=8001 VITE_PORT=5174 ./start_dev.sh</code></pre>
+    </div>
+
+    <div id="queue-scheduler" class="card">
+      <h2>9. Queue Worker and Scheduler</h2>
+      <p>Events are processed asynchronously. You must run a queue worker in production.</p>
+      <pre><code>php artisan queue:work</code></pre>
+
+      <h3>Scheduler</h3>
+      <p>Laravel requires the scheduler to run every minute. Add this to cron:</p>
+      <pre><code>* * * * * cd /path/to/backend && php artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1</code></pre>
+      <p>Scheduled commands used by AppSignals:</p>
+      <ul>
+        <li><code>appsignals:aggregate-stats</code> - aggregates daily analytics data</li>
+        <li><code>appsignals:cleanup-events</code> - removes old events, crashes, and replays based on retention</li>
+        <li><code>appsignals:symbolicate-crashes</code> - symbolicates crash reports (if enabled)</li>
+      </ul>
+
+      <h3>Supervisor example (Linux)</h3>
+      <pre><code>[program:appsignals-queue]
+process_name=%(program_name)s_%(process_num)02d
+command=php /path/to/backend/artisan queue:work --sleep=3 --tries=3
+autostart=true
+autorestart=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/log/appsignals-queue.log</code></pre>
+    </div>
+
+    <div id="reverb" class="card">
+      <h2>10. Reverb Realtime Server</h2>
+      <p>AppSignals uses Laravel Reverb for real-time updates. Start it locally:</p>
+      <pre><code>php artisan reverb:start</code></pre>
+      <p>In production, use Supervisor or systemd to keep the service running. Example:</p>
+      <pre><code>[program:appsignals-reverb]
+command=php /path/to/backend/artisan reverb:start --host=0.0.0.0 --port=8080
+autostart=true
+autorestart=true
+user=www-data
+redirect_stderr=true
+stdout_logfile=/var/log/appsignals-reverb.log</code></pre>
+      <p class="warning">If you run Reverb behind HTTPS, make sure your REVERB_SCHEME is https and REVERB_PORT is 443.</p>
+    </div>
+
+    <div id="geoip" class="card">
+      <h2>11. GeoIP Setup (Optional)</h2>
+      <p>GeoIP is optional but recommended. The system uses MaxMind GeoLite2.</p>
+      <ol>
+        <li>Create a free MaxMind account.</li>
+        <li>Download <code>GeoLite2-City.mmdb</code>.</li>
+        <li>Place it at <code>backend/storage/geoip/GeoLite2-City.mmdb</code>.</li>
+        <li>Confirm <code>GEOIP_DATABASE_PATH</code> matches the path.</li>
+      </ol>
+    </div>
+
+    <div id="build-assets" class="card">
+      <h2>12. Frontend Assets (Vite)</h2>
+      <p>Vite builds the dashboard CSS and JS.</p>
+      <h3>Development build</h3>
+      <pre><code>npm install
+npm run dev</code></pre>
+
+      <h3>Production build</h3>
+      <pre><code>npm install
+npm run build</code></pre>
+
+      <p>Compiled assets are output to <code>backend/public/build</code>.</p>
+    </div>
+
+    <div id="tests" class="card">
+      <h2>13. Testing</h2>
+      <p>Run backend tests with PHPUnit:</p>
+      <pre><code>cd backend
+php artisan test</code></pre>
+      <p class="muted">If you use a dedicated test database, update your <code>.env.testing</code>.</p>
+    </div>
+
+    <div id="api-keys" class="card">
+      <h2>14. API Keys and Ingestion</h2>
+      <p>API Keys are created in the Dashboard under Settings - Setup. The SDK sends data using the <code>X-API-Key</code> header or Bearer token.</p>
+      <p>Rotate keys by creating a new key, updating your apps, and then revoking the old key.</p>
+      <p class="muted">Ingestion endpoints are rate limited per API key. Adjust <code>APPSIGNALS_INGEST_RATE_LIMIT_PER_MINUTE</code> in
+        <code>.env</code> if you expect very high traffic.</p>
+      <p class="muted">Native iOS apps are not subject to CORS. If you add a web client, set
+        <code>APPSIGNALS_CORS_ORIGINS</code> to your domain(s).</p>
+
+      <h3>Ingestion endpoints</h3>
+      <ul>
+        <li><code>POST /api/v1/ingest</code> - Event batch</li>
+        <li><code>POST /api/v1/crash</code> - Crash report</li>
+        <li><code>POST /api/v1/replay</code> - Session replay frames</li>
+      </ul>
+
+      <h3>Example event ingestion (curl)</h3>
+      <pre><code>curl -X POST https://your-domain.com/api/v1/ingest \
+  -H "X-API-Key: ok_live_your_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "batch_id": "2d2d2f1a-1c2b-4c9a-9b36-1f3a2b07b6ff",
+    "sent_at": "2025-01-01T10:00:00Z",
+    "context": {
+      "device_id": "device_123",
+      "session_id": "session_123",
+      "app_version": "1.0.0",
+      "os_version": "17.2"
+    },
+    "events": [
+      {
+        "event_id": "9fdb4a87-5f43-4e8f-9c35-33b1d0fdbd56",
+        "name": "button_clicked",
+        "timestamp": 1735725600,
+        "properties": {
+          "button": "signup"
+        }
+      }
+    ]
+  }'</code></pre>
+    </div>
+
+    <div id="dashboard" class="card">
+      <h2>15. Dashboard Usage</h2>
+      <h3>Projects</h3>
+      <p>Create a project for each app you want to track. Each project has its own API keys and analytics data.</p>
+
+      <h3>Events</h3>
+      <p>Events are tracked by the SDK. Use the Events page to explore and filter by event name, user, device, and more.</p>
+
+      <h3>Crashes</h3>
+      <p>Crash reports include stack traces. You can upload dSYM files to symbolicate crashes.</p>
+      <p class="muted">To enable server-side symbolication, configure
+        <code>APPSIGNALS_SYMBOLICATION_COMMAND</code> and run the scheduled
+        <code>appsignals:symbolicate-crashes</code> command.</p>
+
+      <h3>Customers and Metrics</h3>
+      <p>These sections provide aggregated data like acquisition, activation, and retention metrics.</p>
+    </div>
+
+    <div id="sdk" class="card">
+      <h2>16. AppSignals iOS SDK</h2>
+      <p>The iOS SDK is in <code>AppSignalsSDK/</code> and is distributed as a Swift Package.</p>
+
+      <h3>Install via Swift Package Manager</h3>
+      <p>Local package:</p>
+      <pre><code>.package(path: "../AppSignalsSDK")</code></pre>
+      <p>Or host it in Git:</p>
+      <pre><code>.package(url: "https://your-git-host/AppSignalsSDK.git", from: "1.0.0")</code></pre>
+
+      <h3>Initialize</h3>
+      <pre><code>import AppSignalsSDK
+
+@main
+struct YourApp: App {
+    init() {
+        AppSignals.initialize(
+            apiKey: "ok_live_your_api_key_here",
+            serverURL: "https://your-backend-domain.com"
+        )
+        AppSignals.debugLogging = true
+        AppSignals.enableAutoTracking = true
+        AppSignals.enableCrashReporting = true
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}</code></pre>
+
+      <h3>Track events</h3>
+      <pre><code>AppSignals.track("purchase_completed", properties: [
+    "amount": 9.99,
+    "currency": "USD"
+])</code></pre>
+
+      <h3>Identify users</h3>
+      <pre><code>AppSignals.identify(userId: "user_123")
+AppSignals.reset()</code></pre>
+
+      <h3>Crash reporting</h3>
+      <p>Crash reporting is enabled by default. Upload dSYM files in the dashboard for symbolication.</p>
+      <p class="muted">If you need server-side symbolication, set
+        <code>APPSIGNALS_SYMBOLICATION_ENABLED=true</code> and configure
+        <code>APPSIGNALS_SYMBOLICATION_COMMAND</code>.</p>
+
+      <h3>Session replay</h3>
+      <p>The SDK can capture UI wireframes (no screenshots). Enable it explicitly:</p>
+      <pre><code>AppSignals.enableSessionReplay = true</code></pre>
+      <p class="muted">Session replay redacts text inputs and common sensitive patterns. Do not send secrets in custom
+        event properties.</p>
+
+      <h3>Privacy manifest</h3>
+      <p>The package includes an Apple privacy manifest at <code>AppSignalsSDK/Sources/AppSignalsSDK/PrivacyInfo.xcprivacy</code>.</p>
+
+      <h3>SDK dependencies</h3>
+      <ul>
+        <li>SQLite.swift for local persistence</li>
+        <li>PLCrashReporter for crash reporting</li>
+      </ul>
+    </div>
+
+    <div id="demo-app" class="card">
+      <h2>17. Demo App (AppSignals Demo)</h2>
+      <p>The demo app shows how to integrate the SDK and generate sample events.</p>
+      <ol>
+        <li>Open <code>AppSignalsDemo/AppSignalsDemo.xcodeproj</code> in Xcode.</li>
+        <li>Update the API key and server URL in <code>AppSignalsDemo/AppSignalsDemo/AppSignalsDemoApp.swift</code>.</li>
+        <li>Select a simulator or device.</li>
+        <li>Build and run. The app will send data to your backend.</li>
+      </ol>
+
+      <h3>Common changes for the demo app</h3>
+      <ul>
+        <li>Change the app name and bundle identifier.</li>
+        <li>Update <code>ContentView.swift</code> to add your own UI or test events.</li>
+      </ul>
+    </div>
+
+    <div id="customization" class="card">
+      <h2>18. Customization Guide</h2>
+      <h3>Branding and logo</h3>
+      <p>The main logo asset is <code>backend/public/build/assets/logo.png</code>. Replace this file to change the logo globally.</p>
+      <p>The logo component is defined in <code>backend/resources/views/components/application-logo.blade.php</code>.</p>
+
+      <h3>Text and labels</h3>
+      <p>Landing page copy is in <code>backend/resources/views/welcome.blade.php</code>.</p>
+      <p>Dashboard layout labels are in <code>backend/resources/views/layouts</code> and <code>backend/resources/views/components</code>.</p>
+
+      <h3>Theme and colors</h3>
+      <p>Tailwind configuration is in <code>backend/tailwind.config.js</code>. The global CSS entrypoint is <code>backend/resources/css/app.css</code>.</p>
+
+      <h3>Charts</h3>
+      <p>Charts are configured in <code>backend/resources/js/app.js</code> and in the dashboard Blade views.</p>
+
+      <h3>API and analytics logic</h3>
+      <p>Backend data logic is in <code>backend/app/Http/Controllers</code> and <code>backend/app/Services</code>.</p>
+    </div>
+
+    <div id="deployment" class="card">
+      <h2>19. Deployment (Production)</h2>
+      <p class="muted">Ready-to-copy server and Docker templates are in <code>Documentation/deployment-templates/</code>.</p>
+      <h3>Production checklist</h3>
+      <ul>
+        <li>Set <code>APP_ENV=production</code> and <code>APP_DEBUG=false</code>.</li>
+        <li>Set a secure <code>APP_KEY</code> and rotate if leaked.</li>
+        <li>Set a production database and credentials.</li>
+        <li>Run <code>npm run build</code>.</li>
+        <li>Run <code>php artisan migrate --force</code>.</li>
+        <li>Configure a queue worker.</li>
+        <li>Configure the scheduler (cron).</li>
+        <li>Configure Reverb and set correct host and scheme.</li>
+        <li>Set up HTTPS and a reverse proxy.</li>
+      </ul>
+
+      <h3>Example Nginx config</h3>
+      <pre><code>server {
+    listen 80;
+    server_name analytics.yourdomain.com;
+
+    root /var/www/appsignals/backend/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+    }
+}
+</code></pre>
+
+      <h3>Example Apache VirtualHost</h3>
+      <pre><code>&lt;VirtualHost *:80&gt;
+    ServerName analytics.yourdomain.com
+    DocumentRoot /var/www/appsignals/backend/public
+
+    &lt;Directory /var/www/appsignals/backend/public&gt;
+        AllowOverride All
+        Require all granted
+    &lt;/Directory&gt;
+&lt;/VirtualHost&gt;</code></pre>
+
+      <h3>Docker (optional)</h3>
+      <p>For a quick containerized setup (app + queue + Reverb + scheduler), use the Docker templates:</p>
+      <pre><code>docker compose -f Documentation/deployment-templates/docker/docker-compose.yml up -d --build
+docker compose -f Documentation/deployment-templates/docker/docker-compose.yml exec app php artisan migrate --force</code></pre>
+      <p class="muted">Update <code>APP_KEY</code>, <code>APP_URL</code>, and <code>VITE_REVERB_HOST</code> in the compose file before building.</p>
+
+      <h3>Laravel optimization</h3>
+      <pre><code>php artisan config:cache
+php artisan route:cache
+php artisan view:cache</code></pre>
+    </div>
+
+    <div id="hosting" class="card">
+      <h2>20. Hosting Tutorials (Free and Paid)</h2>
+      <h3>Render (free tier)</h3>
+      <ol>
+        <li>Create a new Web Service.</li>
+        <li>Connect your repo and set the root directory to <code>backend</code>.</li>
+        <li>Add build commands: <code>composer install --no-dev</code> and <code>npm install && npm run build</code>.</li>
+        <li>Add start command: <code>php artisan serve --host 0.0.0.0 --port 10000</code> or use their PHP runtime.</li>
+        <li>Create a free PostgreSQL or MySQL database if supported.</li>
+        <li>Set environment variables in Render dashboard.</li>
+        <li>Run migrations: <code>php artisan migrate --force</code>.</li>
+      </ol>
+
+      <h3>Railway (free credits)</h3>
+      <ol>
+        <li>Create a new project and add a web service.</li>
+        <li>Set a build command that runs <code>composer install</code> and <code>npm run build</code>.</li>
+        <li>Provision a database plugin and set DB credentials in env vars.</li>
+        <li>Run migrations from the Railway shell.</li>
+      </ol>
+
+      <h3>Fly.io (free allowance)</h3>
+      <p>Fly.io works best with Docker. Create a Dockerfile that installs PHP, Node, and runs the Laravel app. Deploy using:</p>
+      <pre><code>fly launch
+fly deploy</code></pre>
+
+      <h3>Shared Hosting / cPanel</h3>
+      <ol>
+        <li>Upload the contents of <code>backend/</code> to your hosting account.</li>
+        <li>Set your document root to <code>backend/public</code> (cPanel Domains or by moving <code>public/</code> to <code>public_html/</code>).</li>
+        <li>Verify <code>backend/public/.htaccess</code> exists (included in this package for Apache).</li>
+        <li>Create a MySQL database and user in cPanel, then update <code>.env</code>.</li>
+        <li>From cPanel Terminal (or SSH), run <code>composer install --no-dev</code>.</li>
+        <li>Run <code>php artisan appsignals:install --seed</code>.</li>
+        <li>Run <code>npm install && npm run build</code> once for production assets if Node is available.</li>
+        <li>Add a cron job to run <code>php artisan schedule:run</code> every minute.</li>
+      </ol>
+      <p class="warning">If your host does not allow long-running queue workers, add a cron job to run <code>php artisan queue:work --stop-when-empty</code> every minute.</p>
+
+      <h3>Laravel Forge / Ploi / VPS</h3>
+      <p>Any standard PHP hosting works if you can point the web root to <code>backend/public</code>, run Composer, and run migrations.</p>
+    </div>
+
+    <div id="security" class="card">
+      <h2>21. Security Checklist</h2>
+      <ul>
+        <li>Never commit or ship a real <code>.env</code> file. Use <code>.env.example</code> only.</li>
+        <li>Disable debug mode in production.</li>
+        <li>Use HTTPS for all traffic.</li>
+        <li>Rotate API keys if leaked.</li>
+        <li>Review <code>Documentation/privacy-policy-template.md</code> and publish your privacy policy.</li>
+        <li>Use database backups and keep retention policies.</li>
+        <li>Set <code>APPSIGNALS_CORS_ORIGINS</code> if you enable browser-based ingestion.</li>
+        <li>Limit file upload sizes for dSYM if needed.</li>
+        <li>Keep dependencies updated.</li>
+      </ul>
+    </div>
+
+    <div id="troubleshooting" class="card">
+      <h2>22. Troubleshooting</h2>
+      <h3>Setup Required screen appears</h3>
+      <ul>
+        <li>This means .env, APP_KEY, or database settings are missing.</li>
+        <li>Run <code>php artisan appsignals:install --seed</code> or set up .env manually.</li>
+      </ul>
+
+      <h3>No events show in the dashboard</h3>
+      <ul>
+        <li>Verify the SDK uses the correct API key.</li>
+        <li>Verify the backend URL is reachable from the device.</li>
+        <li>Check queue worker logs. Events are processed by the queue.</li>
+      </ul>
+
+      <h3>Reverb not connecting</h3>
+      <ul>
+        <li>Confirm REVERB_HOST and REVERB_PORT.</li>
+        <li>Ensure your firewall allows the port.</li>
+        <li>If behind HTTPS, set REVERB_SCHEME=https.</li>
+      </ul>
+
+      <h3>500 errors</h3>
+      <ul>
+        <li>Check <code>storage/logs/laravel.log</code>.</li>
+        <li>Check storage permissions (storage and bootstrap/cache must be writable).</li>
+      </ul>
+    </div>
+
+    <div id="third-party" class="card">
+      <h2>23. Third-Party Packages</h2>
+      <p>The project uses open-source packages in both backend and SDK. You should keep a list of licenses for distribution.</p>
+      <h3>Backend (Composer)</h3>
+      <ul>
+        <li>Laravel Framework</li>
+        <li>Laravel Sanctum</li>
+        <li>Laravel Reverb</li>
+        <li>Guzzle</li>
+        <li>GeoIP2</li>
+      </ul>
+
+      <h3>Frontend (npm)</h3>
+      <ul>
+        <li>Tailwind CSS</li>
+        <li>Alpine.js</li>
+        <li>Chart.js</li>
+        <li>Vite</li>
+      </ul>
+
+      <h3>SDK (Swift Package)</h3>
+      <ul>
+        <li>SQLite.swift</li>
+        <li>PLCrashReporter</li>
+      </ul>
+    </div>
+
+    <div id="faq" class="card">
+      <h2>24. FAQ</h2>
+      <h3>Can I disable session replay?</h3>
+      <p>Yes. Set <code>AppSignals.enableSessionReplay = false</code> in your iOS app.</p>
+
+      <h3>How do I enable crash symbolication?</h3>
+      <p>Upload dSYM files in the dashboard, set <code>APPSIGNALS_SYMBOLICATION_ENABLED=true</code>, and configure
+        <code>APPSIGNALS_SYMBOLICATION_COMMAND</code>. The command receives the stack trace via STDIN and a dSYM path via
+        <code>APPSIGNALS_DSYM_PATH</code>.</p>
+
+      <h3>Can I use PostgreSQL instead of MySQL?</h3>
+      <p>The schema is MySQL-friendly. You can adapt to Postgres but you must test queries and migrations first.</p>
+
+      <h3>Where are files stored?</h3>
+      <p>Uploads are stored in <code>backend/storage/app</code> by default. Configure <code>FILESYSTEM_DISK</code> if you want S3.</p>
+    </div>
+
+    <div id="support" class="card">
+      <h2>25. Support and Updates</h2>
+      <p>If you distribute this project, include your support contact and update policy here. Replace the placeholders below:</p>
+      <ul>
+        <li>Support email: <code>adgan.business@gmail.com</code></li>
+        <li>Response time: 24 to 48 business hours</li>
+        <li>Update schedule: monthly maintenance updates and security fixes as needed</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

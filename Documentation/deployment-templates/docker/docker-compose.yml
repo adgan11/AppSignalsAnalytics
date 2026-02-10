@@ -1,0 +1,76 @@
+name: appsignals
+
+x-app-env: &app-env
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_URL: http://localhost
+  APP_KEY: base64:REPLACE_WITH_APP_KEY
+  DB_CONNECTION: mysql
+  DB_HOST: db
+  DB_PORT: 3306
+  DB_DATABASE: appsignals
+  DB_USERNAME: appsignals
+  DB_PASSWORD: appsignals
+  QUEUE_CONNECTION: database
+  CACHE_STORE: database
+  SESSION_DRIVER: database
+  REVERB_APP_ID: appsignals
+  REVERB_APP_KEY: appsignals-key
+  REVERB_APP_SECRET: appsignals-secret
+  REVERB_HOST: reverb
+  REVERB_PORT: 8080
+  REVERB_SCHEME: http
+  VITE_REVERB_APP_KEY: appsignals-key
+  VITE_REVERB_HOST: localhost
+  VITE_REVERB_PORT: 8080
+  VITE_REVERB_SCHEME: http
+
+x-app: &app
+  build:
+    context: ../../..
+    dockerfile: Documentation/deployment-templates/docker/Dockerfile
+  image: appsignals-app
+  restart: unless-stopped
+  environment:
+    <<: *app-env
+  depends_on:
+    - db
+  volumes:
+    - appsignals-storage:/var/www/appsignals/backend/storage
+
+services:
+  app:
+    <<: *app
+    ports:
+      - "80:80"
+
+  queue:
+    <<: *app
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+
+  reverb:
+    <<: *app
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    ports:
+      - "8080:8080"
+
+  scheduler:
+    <<: *app
+    command: php artisan schedule:work
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: appsignals
+      MYSQL_USER: appsignals
+      MYSQL_PASSWORD: appsignals
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - appsignals-db:/var/lib/mysql
+
+volumes:
+  appsignals-db:
+  appsignals-storage:

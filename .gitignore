@@ -1,0 +1,41 @@
+# macOS
+.DS_Store
+
+# IDE/editor
+.vscode/
+.idea/
+.fleet/
+.zed/
+
+# Swift/Xcode
+DerivedData/
+xcuserdata/
+*.xcworkspace/
+.build/
+.swiftpm/
+Packages/
+
+# Laravel / PHP
+backend/.env
+backend/.env.*
+!backend/.env.example
+backend/vendor/
+backend/node_modules/
+backend/public/storage
+backend/public/hot
+backend/storage/*.key
+backend/.phpunit.result.cache
+backend/auth.json
+backend/Homestead.json
+backend/Homestead.yaml
+
+# SQLite and local runtime data
+backend/database/*.sqlite
+
+# JS package managers
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archives/build artifacts
+*.zip
