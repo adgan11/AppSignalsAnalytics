@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./assets/logo.png" alt="AppSignals logo" width="120" />
+
 # AppSignals Analytics
 
 Self-hosted analytics for iOS apps with first-party data ownership.
