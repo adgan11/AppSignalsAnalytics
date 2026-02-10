@@ -23,6 +23,8 @@ backend/vendor/
 backend/node_modules/
 backend/public/storage
 backend/public/hot
+backend/public/build/
+backend/bootstrap/cache/*.php
 backend/storage/*.key
 backend/.phpunit.result.cache
 backend/auth.json
