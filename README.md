@@ -19,6 +19,9 @@ Self-hosted analytics for iOS apps with first-party data ownership.
 ## Overview
 AppSignals Analytics is an open-source analytics stack for iOS products. It combines a Laravel backend dashboard, a Swift SDK, and a demo app so teams can run analytics on their own infrastructure.
 
+## Project Screenshot
+[![View Project Screenshot on Canva](https://img.shields.io/badge/View%20Project%20Screenshot-Canva-00C4CC?logo=canva&logoColor=white)](https://www.canva.com/design/DAGzndNFwK4/JsoafQvmnwj7iqnb_xNWNA/view?utm_content=DAGzndNFwK4&utm_campaign=designshare&utm_medium=embeds&utm_source=link)
+
 ## Features
 - Event ingestion with batching and custom properties
 - Crash reporting with dSYM-based symbolication support
